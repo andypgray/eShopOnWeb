@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "sliderule": {
+      "command": "sliderule",
+      "args": ["mcp", "eShopOnWeb.slnx"]
+    }
+  }
+}
