@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 2,
+  "rules": {
+    "construction/ui-no-infrastructure-instantiation": {
+      "entries": [
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.CreateUserEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "c4ca03cf56adfcfe" },
+        { "source": "T:Microsoft.eShopWeb.Web.Areas.Identity.Pages.Account.RegisterModel", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "e4dc91b93f59ea1d" },
+        { "source": "T:Microsoft.eShopWeb.Web.Controllers.ManageController", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.UserNotFoundException", "siteCount": 1, "seal": "076153e4db74bb4f" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "rules": {
+    "layering/web-infrastructure-via-composition-root": {
+      "entries": [
+        { "source": "T:Microsoft.eShopWeb.Web.Areas.Identity.Pages.Account.ConfirmEmailModel", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 2, "seal": "ed2c33e0e2787688" },
+        { "source": "T:Microsoft.eShopWeb.Web.Areas.Identity.Pages.Account.LoginModel", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 2, "seal": "2a4b515f87acae36" },
+        { "source": "T:Microsoft.eShopWeb.Web.Areas.Identity.Pages.Account.LogoutModel", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 2, "seal": "bec1a0df2f08c920" },
+        { "source": "T:Microsoft.eShopWeb.Web.Areas.Identity.Pages.Account.RegisterModel", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 5, "seal": "19782fe96de928c9" },
+        { "source": "T:Microsoft.eShopWeb.Web.Controllers.ManageController", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 6, "seal": "93fb6b97399baed6" },
+        { "source": "T:Microsoft.eShopWeb.Web.Controllers.ManageController", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.UserNotFoundException", "siteCount": 1, "seal": "0772816dd9054aeb" },
+        { "source": "T:Microsoft.eShopWeb.Web.Controllers.UserController", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 2, "seal": "80d1d9207bb0f06b" },
+        { "source": "T:Microsoft.eShopWeb.Web.Extensions.UserManagerExtensions", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "69261fe9210ae569" },
+        { "source": "T:Microsoft.eShopWeb.Web.Pages.Basket.CheckoutModel", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 2, "seal": "9997ca7233d8cd01" },
+        { "source": "T:Microsoft.eShopWeb.Web.Pages.Manage.Views_Manage__ManageNav", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "3a35b8b5dfe3b6c3" },
+        { "source": "T:Microsoft.eShopWeb.Web.Pages.Shared.Components.BasketComponent.Basket", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 2, "seal": "3921c604988bc40b" }
+      ]
+    }
+  }
+}

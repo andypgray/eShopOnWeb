@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 2,
+  "rules": {
+    "layering/infrastructure-not-blazor-shared": {
+      "entries": [
+        { "source": "T:Microsoft.eShopWeb.Infrastructure.Identity.AppIdentityDbContextSeed", "target": "T:BlazorShared.Authorization.Constants", "siteCount": 4, "seal": "5932e61802e953a7" },
+        { "source": "T:Microsoft.eShopWeb.Infrastructure.Identity.AppIdentityDbContextSeed", "target": "T:BlazorShared.Authorization.Constants.Roles", "siteCount": 4, "seal": "6f86dc76c6fdbcf2" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 2,
+  "rules": {
+    "layering/core-declares-no-blazor-shared": {
+      "entries": [
+        { "subject": "project:ApplicationCore", "seal": "629cafd877049c2d" }
+      ]
+    }
+  }
+}

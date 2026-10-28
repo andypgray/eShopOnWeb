@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 2,
+  "rules": {
+    "layering/public-api-infrastructure-via-composition-root": {
+      "entries": [
+        { "source": "T:Microsoft.eShopWeb.PublicApi.AuthEndpoints.AuthenticateEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "86548485a7f7b3f0" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.Extensions.ApplicationUserExtensions", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 2, "seal": "c00d8ea177c9fee2" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.RoleManagementEndpoints.DeleteRoleEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "7f892fc83e236a56" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.RoleMembershipEndpoints.DeleteUserFromRoleEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "d2c2edc0f218b72d" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.RoleMembershipEndpoints.GetRoleMembershipResponse", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "520903ed7168b9c9" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.RoleMembershipEndpoints.RoleMembershipGetByNameEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "185f0ef2c284e524" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.CreateUserEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.HostEnvironmentExtensions", "siteCount": 1, "seal": "f5113bfed388b875" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.CreateUserEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 2, "seal": "d1332c74500d3380" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.DeleteUserEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "4d6b00ec1d3c2b68" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.SaveRolesForUserEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "71f5f6114aee925a" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.UpdateRoleEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "e4a55f526d748921" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.UpdateUserResponse", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "da3448201f7f46af" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.UserGetByIdEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "1cd307e12fa54031" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.UserGetByUserNameEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "22426d41f595f104" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.UserGetRolesByIdEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "7966867bb5abbe14" },
+        { "source": "T:Microsoft.eShopWeb.PublicApi.UserManagementEndpoints.UserListEndpoint", "target": "T:Microsoft.eShopWeb.Infrastructure.Identity.ApplicationUser", "siteCount": 1, "seal": "81c50ff7d2cc10de" }
+      ]
+    }
+  }
+}
