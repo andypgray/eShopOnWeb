@@ -1,0 +1,13 @@
+{
+  "solution": "eShopOnWeb.slnx",
+  "spec": "arch/EShopOnWeb.Architecture/EShopOnWeb.Architecture.csproj",
+  "render": {
+    "model": true,
+    "diagram": {
+      "path": "ARCHITECTURE.md",
+      "exclude": [
+        "*Tests"
+      ]
+    }
+  }
+}

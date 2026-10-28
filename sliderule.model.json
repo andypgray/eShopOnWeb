@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 2,
+  "spec": "EShopOnWeb.Architecture",
+  "projects": [
+    { "name": "ApplicationCore", "assemblies": ["ApplicationCore"] },
+    { "name": "BlazorAdmin", "assemblies": ["BlazorAdmin"] },
+    { "name": "BlazorShared", "assemblies": ["BlazorShared"] },
+    { "name": "EndToEndTests", "assemblies": ["EndToEndTests"] },
+    { "name": "FunctionalTests", "assemblies": ["FunctionalTests"] },
+    { "name": "Infrastructure", "assemblies": ["Infrastructure"] },
+    { "name": "IntegrationTests", "assemblies": ["IntegrationTests"] },
+    { "name": "PublicApi", "assemblies": ["PublicApi"] },
+    { "name": "PublicApiIntegrationTests", "assemblies": ["PublicApiIntegrationTests"] },
+    { "name": "UnitTests", "assemblies": ["UnitTests"] },
+    { "name": "Web", "assemblies": ["Web"] },
+    { "name": "eShopWeb.AppHost", "assemblies": ["eShopWeb.AppHost"] },
+    { "name": "eShopWeb.AspireServiceDefaults", "assemblies": ["eShopWeb.AspireServiceDefaults"] }
+  ],
+  "layers": [
+    { "name": "ApplicationCore", "definition": { "noun": { "node": "project", "name": "ApplicationCore" } }, "purpose": "The Application Core holds the business model, which includes entities, services, and interfaces." },
+    { "name": "Infrastructure", "definition": { "noun": { "node": "project", "name": "Infrastructure" } }, "purpose": "Infrastructure holds the data access implementations and the services that interact with infrastructure concerns, implementing interfaces defined in the Application Core." },
+    { "name": "Web", "definition": { "noun": { "node": "project", "name": "Web" } }, "purpose": "Web is the monolithic ASP.NET Core front end: MVC controllers, Razor Pages and the host for the Blazor admin." },
+    { "name": "PublicApi", "definition": { "noun": { "node": "project", "name": "PublicApi" } }, "purpose": "PublicApi is the web API the Blazor admin talks to, one endpoint class per operation." },
+    { "name": "BlazorAdmin", "definition": { "noun": { "node": "project", "name": "BlazorAdmin" } }, "purpose": "BlazorAdmin is the Blazor WebAssembly admin client that runs in the browser and calls PublicApi." },
+    { "name": "BlazorShared", "definition": { "noun": { "node": "project", "name": "BlazorShared" } }, "purpose": "BlazorShared holds the models and contracts shared between the Blazor admin and the API." },
+    { "name": "ServiceDefaults", "definition": { "noun": { "node": "project", "name": "eShopWeb.AspireServiceDefaults" } }, "purpose": "ServiceDefaults holds the Aspire service defaults shared by the hosts." }
+  ],
+  "rules": [
+    {
+      "id": "layering/core-independent",
+      "posture": "enforce",
+      "sentence": "The ApplicationCore layer must reference only itself (external packages are not constrained by this rule).",
+      "because": "The Application Core is the center of the Clean Architecture this application follows. The other projects depend on it, and it has no dependencies on other application layers.",
+      "citation": "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures",
+      "constraint": { "node": "mustOnlyReferenceItself", "subject": { "noun": { "node": "layer", "name": "ApplicationCore" } } }
+    },
+    {
+      "id": "layering/blazor-shared-independent",
+      "posture": "enforce",
+      "sentence": "The BlazorShared layer must reference only itself (external packages are not constrained by this rule).",
+      "because": "BlazorShared contains the contracts the admin client and the API share, and both the browser and the server build it, so it references no other project.",
+      "constraint": { "node": "mustOnlyReferenceItself", "subject": { "noun": { "node": "layer", "name": "BlazorShared" } } }
+    },
+    {
+      "id": "layering/blazor-admin-client-only",
+      "posture": "enforce",
+      "sentence": "The BlazorAdmin layer must reference only the BlazorShared layer (external packages are not constrained by this rule).",
+      "because": "BlazorAdmin runs in the browser and reaches the server only through PublicApi over HTTP. BlazorShared is the one project it shares with the server.",
+      "constraint": { "node": "mustOnlyReference", "subject": { "noun": { "node": "layer", "name": "BlazorAdmin" } }, "operands": [{ "noun": { "node": "layer", "name": "BlazorShared" } }] }
+    },
+    {
+      "id": "layering/service-defaults-independent",
+      "posture": "enforce",
+      "sentence": "The ServiceDefaults layer must reference only itself (external packages are not constrained by this rule).",
+      "because": "The Aspire service defaults configure telemetry, health checks and service discovery for every host, and have no dependency on the application itself.",
+      "constraint": { "node": "mustOnlyReferenceItself", "subject": { "noun": { "node": "layer", "name": "ServiceDefaults" } } }
+    },
+    {
+      "id": "layering/infrastructure-not-ui",
+      "posture": "enforce",
+      "sentence": "The Infrastructure layer must not reference the Web layer, the PublicApi layer or the BlazorAdmin layer.",
+      "because": "Infrastructure implements interfaces defined in the Application Core. Both the UI and Infrastructure depend on the Application Core, and Infrastructure has no reason to know a UI exists.",
+      "citation": "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures",
+      "constraint": { "node": "mustNotReference", "subject": { "noun": { "node": "layer", "name": "Infrastructure" } }, "operands": [{ "noun": { "node": "layer", "name": "Web" } }, { "noun": { "node": "layer", "name": "PublicApi" } }, { "noun": { "node": "layer", "name": "BlazorAdmin" } }] }
+    },
+    {
+      "id": "layering/infrastructure-not-blazor-shared",
+      "posture": "migrate",
+      "sentence": "The Infrastructure layer must not reference the BlazorShared layer.",
+      "because": "Infrastructure implements the Application Core's interfaces, and BlazorShared is the admin client's contract with the API. Infrastructure reaches BlazorShared only through the Application Core's project reference to it.",
+      "citation": "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures",
+      "constraint": { "node": "mustNotReference", "subject": { "noun": { "node": "layer", "name": "Infrastructure" } }, "operands": [{ "noun": { "node": "layer", "name": "BlazorShared" } }] },
+      "migrate": { "from": "The identity seed reads role names from BlazorShared.Authorization.Constants.", "toSentence": "The Infrastructure layer must not reference the BlazorShared layer.", "baselinePath": "arch/baselines/layering/infrastructure-not-blazor-shared.json", "policy": "migrateIfSmall" }
+    },
+    {
+      "id": "layering/web-not-public-api",
+      "posture": "enforce",
+      "sentence": "The Web layer must not reference the PublicApi layer.",
+      "because": "Web and PublicApi are separate hosts that share the Application Core, and neither calls into the other's code.",
+      "constraint": { "node": "mustNotReference", "subject": { "noun": { "node": "layer", "name": "Web" } }, "operands": [{ "noun": { "node": "layer", "name": "PublicApi" } }] }
+    },
+    {
+      "id": "layering/public-api-not-web",
+      "posture": "enforce",
+      "sentence": "The PublicApi layer must not reference the Web layer or the BlazorAdmin layer.",
+      "because": "PublicApi serves the admin client over HTTP. It shares contracts with that client through BlazorShared, and uses neither the Web host's code nor the client's.",
+      "constraint": { "node": "mustNotReference", "subject": { "noun": { "node": "layer", "name": "PublicApi" } }, "operands": [{ "noun": { "node": "layer", "name": "Web" } }, { "noun": { "node": "layer", "name": "BlazorAdmin" } }] }
+    },
+    {
+      "id": "layering/web-infrastructure-via-composition-root",
+      "posture": "migrate",
+      "sentence": "Types in the Web layer, except types in the Web layer in `Microsoft.eShopWeb.Web.Configuration.*` or types in the Web layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, must not reference the Infrastructure layer.",
+      "because": "The UI project references Infrastructure so that it can wire up dependency injection, and references to Infrastructure types belong in the app's composition root. Most of today's sites name ApplicationUser, the ASP.NET Core Identity user type, which is declared in Infrastructure.Identity.",
+      "citation": "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures",
+      "constraint": { "node": "mustNotReference", "subject": { "noun": { "node": "layer", "name": "Web" }, "adjectives": [{ "node": "except", "payload": { "union": [{ "noun": { "node": "layer", "name": "Web" }, "adjectives": [{ "node": "inNamespace", "glob": "Microsoft.eShopWeb.Web.Configuration.*" }] }, { "noun": { "node": "layer", "name": "Web" }, "adjectives": [{ "node": "named", "names": ["Program", "ServiceCollectionExtensions", "WebApplicationExtensions"] }] }] } }] }, "operands": [{ "noun": { "node": "layer", "name": "Infrastructure" } }] },
+      "migrate": { "from": "Identity pages, controllers and the basket component name ApplicationUser (and ManageController UserNotFoundException) from Infrastructure.Identity.", "toSentence": "Types in the Web layer, except types in the Web layer in `Microsoft.eShopWeb.Web.Configuration.*` or types in the Web layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, must not reference the Infrastructure layer.", "baselinePath": "arch/baselines/layering/web-infrastructure-via-composition-root.json", "policy": "migrateIfSmall" }
+    },
+    {
+      "id": "layering/public-api-infrastructure-via-composition-root",
+      "posture": "migrate",
+      "sentence": "Types in the PublicApi layer, except types in the PublicApi layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, must not reference the Infrastructure layer.",
+      "because": "The API references Infrastructure so that it can wire up dependency injection, and references to Infrastructure types belong in the app's composition root. Most of today's sites name ApplicationUser, the ASP.NET Core Identity user type, which is declared in Infrastructure.Identity.",
+      "citation": "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures",
+      "constraint": { "node": "mustNotReference", "subject": { "noun": { "node": "layer", "name": "PublicApi" }, "adjectives": [{ "node": "except", "payload": { "noun": { "node": "layer", "name": "PublicApi" }, "adjectives": [{ "node": "named", "names": ["Program", "ServiceCollectionExtensions", "WebApplicationExtensions"] }] } }] }, "operands": [{ "noun": { "node": "layer", "name": "Infrastructure" } }] },
+      "migrate": { "from": "User and role management endpoints name ApplicationUser from Infrastructure.Identity; CreateUserEndpoint calls HostEnvironmentExtensions.", "toSentence": "Types in the PublicApi layer, except types in the PublicApi layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, must not reference the Infrastructure layer.", "baselinePath": "arch/baselines/layering/public-api-infrastructure-via-composition-root.json", "policy": "migrateIfSmall" }
+    },
+    {
+      "id": "construction/ui-no-infrastructure-instantiation",
+      "posture": "migrate",
+      "sentence": "Types in the Web layer, except types in the Web layer in `Microsoft.eShopWeb.Web.Configuration.*` or types in the Web layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, or types in the PublicApi layer, except types in the PublicApi layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, must not construct the Infrastructure layer.",
+      "because": "UI code works with infrastructure through interfaces defined in the Application Core, so it does not instantiate Infrastructure types outside the composition root.",
+      "citation": "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures",
+      "constraint": { "node": "mustNotConstruct", "subject": { "union": [{ "noun": { "node": "layer", "name": "Web" }, "adjectives": [{ "node": "except", "payload": { "union": [{ "noun": { "node": "layer", "name": "Web" }, "adjectives": [{ "node": "inNamespace", "glob": "Microsoft.eShopWeb.Web.Configuration.*" }] }, { "noun": { "node": "layer", "name": "Web" }, "adjectives": [{ "node": "named", "names": ["Program", "ServiceCollectionExtensions", "WebApplicationExtensions"] }] }] } }] }, { "noun": { "node": "layer", "name": "PublicApi" }, "adjectives": [{ "node": "except", "payload": { "noun": { "node": "layer", "name": "PublicApi" }, "adjectives": [{ "node": "named", "names": ["Program", "ServiceCollectionExtensions", "WebApplicationExtensions"] }] } }] }] }, "operands": [{ "noun": { "node": "layer", "name": "Infrastructure" } }] },
+      "migrate": { "from": "Register and CreateUserEndpoint construct ApplicationUser; ManageController throws a new UserNotFoundException.", "toSentence": "Types in the Web layer, except types in the Web layer in `Microsoft.eShopWeb.Web.Configuration.*` or types in the Web layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, or types in the PublicApi layer, except types in the PublicApi layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, must not construct the Infrastructure layer.", "baselinePath": "arch/baselines/construction/ui-no-infrastructure-instantiation.json", "policy": "migrateIfSmall" }
+    },
+    {
+      "id": "externals/core-no-ef",
+      "posture": "enforce",
+      "sentence": "The ApplicationCore layer must not reference types in `Microsoft.EntityFrameworkCore.*`.",
+      "because": "Entities are stored with EF Core, but EF Core is an implementation detail kept out of the ApplicationCore project. The DbContext and the repositories are in Infrastructure.",
+      "citation": "https://nimblepros.github.io/eShopOnWeb/getting-started-for-beginners.html",
+      "constraint": { "node": "mustNotReference", "subject": { "noun": { "node": "layer", "name": "ApplicationCore" } }, "operands": [{ "noun": { "node": "namespace", "glob": "Microsoft.EntityFrameworkCore.*" } }] }
+    },
+    {
+      "id": "externals/core-no-aspnetcore",
+      "posture": "enforce",
+      "sentence": "The ApplicationCore layer must not reference types in `Microsoft.AspNetCore.*`.",
+      "because": "ASP.NET Core is a UI concern, and the Application Core has no dependency on the UI.",
+      "citation": "https://github.com/dotnet-architecture/eShopOnWeb/issues/581",
+      "constraint": { "node": "mustNotReference", "subject": { "noun": { "node": "layer", "name": "ApplicationCore" } }, "operands": [{ "noun": { "node": "namespace", "glob": "Microsoft.AspNetCore.*" } }] }
+    },
+    {
+      "id": "externals/ui-no-ef",
+      "posture": "enforce",
+      "sentence": "Types in the Web layer, except types in the Web layer in `Microsoft.eShopWeb.Web.Configuration.*` or types in the Web layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, or types in the PublicApi layer, except types in the PublicApi layer named `Program`, `ServiceCollectionExtensions` or `WebApplicationExtensions`, must not reference types in `Microsoft.EntityFrameworkCore.*`.",
+      "because": "UI types read and write data through the repository and specification interfaces defined in the Application Core. EF Core types belong to Infrastructure and the composition root.",
+      "citation": "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures",
+      "constraint": { "node": "mustNotReference", "subject": { "union": [{ "noun": { "node": "layer", "name": "Web" }, "adjectives": [{ "node": "except", "payload": { "union": [{ "noun": { "node": "layer", "name": "Web" }, "adjectives": [{ "node": "inNamespace", "glob": "Microsoft.eShopWeb.Web.Configuration.*" }] }, { "noun": { "node": "layer", "name": "Web" }, "adjectives": [{ "node": "named", "names": ["Program", "ServiceCollectionExtensions", "WebApplicationExtensions"] }] }] } }] }, { "noun": { "node": "layer", "name": "PublicApi" }, "adjectives": [{ "node": "except", "payload": { "noun": { "node": "layer", "name": "PublicApi" }, "adjectives": [{ "node": "named", "names": ["Program", "ServiceCollectionExtensions", "WebApplicationExtensions"] }] } }] }] }, "operands": [{ "noun": { "node": "namespace", "glob": "Microsoft.EntityFrameworkCore.*" } }] }
+    },
+    {
+      "id": "naming/interfaces-prefix-i",
+      "posture": "enforce",
+      "sentence": "Authored interfaces in the ApplicationCore, Infrastructure, Web, PublicApi, BlazorAdmin or BlazorShared layers must be named `I*`.",
+      "because": "Interface names start with I, the .NET naming convention every interface in the solution follows.",
+      "citation": "https://learn.microsoft.com/dotnet/standard/design-guidelines/names-of-classes-structs-and-interfaces",
+      "constraint": { "node": "mustHavePrefix", "subject": { "union": [{ "noun": { "node": "layer", "name": "ApplicationCore" } }, { "noun": { "node": "layer", "name": "Infrastructure" } }, { "noun": { "node": "layer", "name": "Web" } }, { "noun": { "node": "layer", "name": "PublicApi" } }, { "noun": { "node": "layer", "name": "BlazorAdmin" } }, { "noun": { "node": "layer", "name": "BlazorShared" } }], "adjectives": [{ "node": "authored" }, { "node": "ofKind", "kind": "interface" }] }, "prefix": "I" }
+    },
+    {
+      "id": "naming/repository-implements-irepository",
+      "posture": "enforce",
+      "sentence": "Authored classes in the ApplicationCore, Infrastructure, Web, PublicApi, BlazorAdmin or BlazorShared layers whose name matches `*Repository*` must implement `IRepository<T>`.",
+      "because": "Data access is abstracted as repository interfaces in the Application Core and implemented in Infrastructure, so a class named as a repository implements IRepository<T>.",
+      "citation": "https://nimblepros.github.io/eShopOnWeb/getting-started-for-beginners.html",
+      "constraint": { "node": "mustImplement", "subject": { "union": [{ "noun": { "node": "layer", "name": "ApplicationCore" } }, { "noun": { "node": "layer", "name": "Infrastructure" } }, { "noun": { "node": "layer", "name": "Web" } }, { "noun": { "node": "layer", "name": "PublicApi" } }, { "noun": { "node": "layer", "name": "BlazorAdmin" } }, { "noun": { "node": "layer", "name": "BlazorShared" } }], "adjectives": [{ "node": "authored" }, { "node": "ofKind", "kind": "class" }, { "node": "withNameMatching", "glob": "*Repository*" }] }, "anchor": { "name": "Microsoft.eShopWeb.ApplicationCore.Interfaces.IRepository<T>", "onDefinition": true } }
+    },
+    {
+      "id": "members/entity-fields-private",
+      "posture": "enforce",
+      "sentence": "Fields of types in the ApplicationCore layer in `Microsoft.eShopWeb.ApplicationCore.Entities.*` must be private.",
+      "because": "Entities keep their state in private fields and change it through methods, so an aggregate can check its own rules on every change.",
+      "constraint": { "node": "memberMustBePrivate", "memberSubject": { "source": { "noun": { "node": "layer", "name": "ApplicationCore" }, "adjectives": [{ "node": "inNamespace", "glob": "Microsoft.eShopWeb.ApplicationCore.Entities.*" }] }, "kind": "field" } }
+    },
+    {
+      "id": "infrastructure/ef-migrations/tripwire",
+      "posture": "caution",
+      "sentence": "",
+      "because": "Migrations are generated history that existing databases have already applied.",
+      "scope": { "role": "tripwire", "scopeId": "infrastructure/ef-migrations", "scoped": { "union": [{ "noun": { "node": "namespace", "glob": "Microsoft.eShopWeb.Infrastructure.Data.Migrations.*" } }, { "noun": { "node": "namespace", "glob": "Microsoft.eShopWeb.Infrastructure.Identity.Migrations.*" } }] }, "surface": [], "dragons": "EF Core migrations for CatalogContext and AppIdentityDbContext, generated by `dotnet ef migrations add`. Each migration is history already applied to existing databases: editing or deleting one desynchronises them from the code, and the *.Designer.cs files and *ModelSnapshot.cs are tool output that the next migration diffs against. Change the model, then add a new migration with the commands in the README; never hand-edit an existing one." }
+    }
+  ],
+  "omitted": [
+    { "id": "layering/core-declares-no-blazor-shared", "reason": "A Must predicate is code, and this file carries data only." }
+  ]
+}
