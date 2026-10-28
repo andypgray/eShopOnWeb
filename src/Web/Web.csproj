@@ -50,6 +50,7 @@
     <PackageReference Include="System.IO.FileSystem" />
     <PackageReference Include="System.Diagnostics.Debug" />
     <PackageReference Include="System.Diagnostics.Tracing" />
+    <PackageReference Include="SlideRule.Analyzers" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\fonts\" />

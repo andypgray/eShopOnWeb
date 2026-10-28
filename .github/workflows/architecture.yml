@@ -31,8 +31,8 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Install SlideRule
         run: dotnet tool install -g SlideRule.Cli --version "$SLIDERULE_VERSION"
-      - name: Build
-        run: dotnet build eShopOnWeb.slnx
+      - name: Build, with the architecture analyzer's diagnostics as errors
+        run: dotnet build eShopOnWeb.slnx -warnaserror:SR2001,SR2002,SR2090,SR2091,SR2092,SR2093
       - name: Check the architecture and write SARIF
         env:
           BASE_REF: ${{ github.base_ref }}

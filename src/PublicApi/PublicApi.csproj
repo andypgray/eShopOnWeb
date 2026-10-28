@@ -27,6 +27,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
     <PackageReference Include="NimblePros.Metronome" />     
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="SlideRule.Analyzers" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

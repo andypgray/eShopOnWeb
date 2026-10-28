@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="BlazorInputFile" />
     <PackageReference Include="FluentValidation" />
+    <PackageReference Include="SlideRule.Analyzers" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

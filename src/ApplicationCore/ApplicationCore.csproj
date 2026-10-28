@@ -11,6 +11,7 @@
 		<PackageReference Include="Ardalis.Specification" />
     <PackageReference Include="Mediator.Abstractions" />
     <PackageReference Include="NimblePros.SharedKernel" />
+		<PackageReference Include="SlideRule.Analyzers" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>

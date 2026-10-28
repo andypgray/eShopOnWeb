@@ -10,6 +10,7 @@
 		<PackageReference Include="Microsoft.Extensions.Identity.Stores" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Configuration" />
 		<PackageReference Include="System.Net.Http.Json" />
+		<PackageReference Include="SlideRule.Analyzers" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>

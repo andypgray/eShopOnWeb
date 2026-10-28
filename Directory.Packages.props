@@ -95,5 +95,6 @@
     <PackageVersion Include="MSTest.TestAdapter" Version="4.2.3" />
     <PackageVersion Include="MSTest.TestFramework" Version="4.3.2" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
+    <PackageVersion Include="SlideRule.Analyzers" Version="0.2.1" />
   </ItemGroup>
 </Project>
