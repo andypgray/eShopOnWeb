@@ -1,5 +1,11 @@
 # Microsoft eShopOnWeb ASP.NET Core Reference Application
 
+> This is an unofficial fork that adopts [SlideRule](https://github.com/andypgray/sliderule), an architecture checker for .NET, on eShopOnWeb. It is not affiliated with NimblePros or Microsoft.
+>
+> The `sliderule` branch adds an architecture spec derived from the e-book and this repository's docs, a baseline of today's violations, and agent context in `AGENTS.md`. It also adds a Claude Code hook, an MCP server registration, a CI check and the build analyzer. The application code is unchanged.
+>
+> [Every change from upstream](https://github.com/andypgray/eShopOnWeb/compare/main...sliderule) · [The spec](arch/EShopOnWeb.Architecture/ArchitectureSpec.cs) · [AGENTS.md](AGENTS.md) · [The walkthrough](https://github.com/andypgray/sliderule/tree/main/examples/eShopOnWeb)
+
 This Microsoft reference application is now being maintained by [NimblePros](https://nimblepros.com/).
 
 If you're looking for the .NET Aspire eShop sample it's [here](https://github.com/dotnet/eShop). Microsoft also recommends the [Reliable Web App](https://learn.microsoft.com/azure/architecture/web-apps/guides/reliable-web-app/overview) patterns guidance for building web apps with enterprise app patterns.
