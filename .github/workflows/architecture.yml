@@ -1,0 +1,52 @@
+name: Architecture
+
+on:
+  push:
+    branches:
+      - sliderule
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  SLIDERULE_VERSION: '0.2.1'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read           # checkout
+      security-events: write   # upload SARIF to code scanning
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.x'
+      - name: Install SlideRule
+        run: dotnet tool install -g SlideRule.Cli --version "$SLIDERULE_VERSION"
+      - name: Build
+        run: dotnet build eShopOnWeb.slnx
+      - name: Check the architecture and write SARIF
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if [ -n "$BASE_REF" ]; then
+            sliderule check --diff-base "origin/$BASE_REF" --sarif sliderule.sarif
+          else
+            sliderule check --sarif sliderule.sarif
+          fi
+      - name: Require every rendered file to be current
+        run: sliderule render --check
+      - name: Upload SARIF to code scanning
+        if: always() && (github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork) && hashFiles('sliderule.sarif') != ''
+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+        with:
+          sarif_file: sliderule.sarif
+          category: sliderule
